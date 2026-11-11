@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Cloudflare Workers (static assets) — https://developers.cloudflare.com/workers/static-assets/
+  "name": "meo-technologies",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+  // Per-version preview URLs, used to smoke-test each build before it gets traffic.
+  "workers_dev": true,
+  "preview_urls": true,
+  "observability": { "enabled": true }
+
+  // Custom domain: uncomment and set your domain (must be a zone on your Cloudflare account).
+  // "routes": [
+  //   { "pattern": "meotechnologies.com", "custom_domain": true },
+  //   { "pattern": "www.meotechnologies.com", "custom_domain": true }
+  // ]
+}
