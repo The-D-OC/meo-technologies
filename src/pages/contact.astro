@@ -1,0 +1,464 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../site';
+
+const projectTypes = ['Mobile app', 'Web platform', 'Custom software', 'AI & automation', 'Design', 'Something else'];
+const budgets = ['Under £10k', '£10k–£25k', '£25k–£50k', '£50k+', 'Not sure yet'];
+
+const next = [
+  { title: 'We reply within one working day', body: 'A real person reads every enquiry — usually the same day.' },
+  { title: 'A free 30-minute discovery call', body: 'We talk through your goals, users and constraints.' },
+  { title: 'A clear, fixed estimate', body: 'Scope, timeline and cost broken down by milestone.' },
+];
+---
+
+<Base
+  fullTitle="Contact Meo Technologies — Start Your Software or App Project"
+  description="Tell us about your app, website or custom software project. Meo Technologies replies within one working day with next steps and a free discovery call."
+  breadcrumbs={[{ name: 'Contact', path: '/contact/' }]}
+  schema={[
+    {
+      '@type': 'ContactPage',
+      name: `Contact ${SITE.name}`,
+      url: new URL('/contact/', Astro.site).href,
+      about: { '@id': new URL('/#organization', Astro.site).href },
+    },
+  ]}
+>
+  <section class="contact">
+    <div class="orb" aria-hidden="true" data-parallax="0.15"></div>
+    <div class="container grid">
+      <div class="intro">
+        <span class="eyebrow" data-reveal>Contact</span>
+        <h1 data-split data-serif="build">Let’s build something great.</h1>
+        <p class="lead" data-reveal style="--d:400">
+          Tell us a little about your project. The more detail you share, the more useful our first reply will be.
+        </p>
+
+        <div class="channels" data-reveal style="--d:550">
+          <a class="card channel" href={`mailto:${SITE.email}`}>
+            <span class="label">Email</span>
+            <span class="value">{SITE.email}</span>
+            <span class="go" aria-hidden="true">↗</span>
+          </a>
+          <div class="card channel">
+            <span class="label">Studio</span>
+            <span class="value">{SITE.location}</span>
+          </div>
+        </div>
+
+        <div class="next" data-reveal style="--d:650">
+          <span class="label">What happens next</span>
+          <ol>
+            {
+              next.map((n) => (
+                <li>
+                  <strong>{n.title}</strong>
+                  <span>{n.body}</span>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+      </div>
+
+      <div class="form-wrap" data-reveal="scale" style="--d:300">
+        <form
+          class="form"
+          id="contact-form"
+          data-endpoint={SITE.contactEndpoint}
+          data-email={SITE.email}
+          novalidate
+        >
+          <fieldset>
+            <legend>What are you looking to build?</legend>
+            <div class="pills">
+              {
+                projectTypes.map((t, i) => (
+                  <label class="pill">
+                    <input type="checkbox" name="type" value={t} />
+                    <span style={`--i:${i}`}>{t}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <div class="row">
+            <div class="field">
+              <input id="name" name="name" type="text" autocomplete="name" placeholder=" " required />
+              <label for="name">Your name *</label>
+            </div>
+            <div class="field">
+              <input id="email" name="email" type="email" autocomplete="email" placeholder=" " required />
+              <label for="email">Email *</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <input id="company" name="company" type="text" autocomplete="organization" placeholder=" " />
+            <label for="company">Company</label>
+          </div>
+
+          <fieldset>
+            <legend>Estimated budget</legend>
+            <div class="pills">
+              {
+                budgets.map((b, i) => (
+                  <label class="pill">
+                    <input type="radio" name="budget" value={b} />
+                    <span style={`--i:${i}`}>{b}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <div class="field">
+            <textarea id="message" name="message" rows="5" placeholder=" " required minlength="10"></textarea>
+            <label for="message">Tell us about your project *</label>
+          </div>
+
+          <!-- Spam trap: hidden from people, filled in by bots -->
+          <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+          <label class="consent">
+            <input type="checkbox" name="consent" required />
+            <span>I agree to Meo Technologies using these details to reply to my enquiry, as described in the <a href="/privacy/">Privacy Policy</a>.</span>
+          </label>
+
+          <p class="error" role="alert" aria-live="assertive"></p>
+
+          <button type="submit" class="btn btn-primary submit" data-magnetic="0.15">
+            <span class="txt">Send enquiry</span>
+            <span class="arrow">→</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <div class="success" aria-live="polite" hidden>
+          <svg viewBox="0 0 52 52" width="72" height="72" aria-hidden="true">
+            <circle cx="26" cy="26" r="24" fill="none"></circle>
+            <path d="M15 27l7 7 15-16" fill="none"></path>
+          </svg>
+          <h2>Thank you!</h2>
+          <p class="success-msg">We’ve got your message and will be in touch within one working day.</p>
+          <a href="/" class="btn btn-ghost" data-magnetic>Back to home</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  function setupForm() {
+    const form = document.querySelector<HTMLFormElement>('#contact-form');
+    if (!form || form.dataset.bound) return;
+    form.dataset.bound = 'true';
+
+    const wrap = form.parentElement!;
+    const success = wrap.querySelector<HTMLElement>('.success')!;
+    const successMsg = success.querySelector<HTMLElement>('.success-msg')!;
+    const error = form.querySelector<HTMLElement>('.error')!;
+    const button = form.querySelector<HTMLButtonElement>('.submit')!;
+    const endpoint = form.dataset.endpoint ?? '';
+    const to = form.dataset.email ?? '';
+
+    const showError = (msg: string) => {
+      error.textContent = msg;
+      form.classList.remove('shake');
+      void form.offsetWidth;
+      form.classList.add('shake');
+    };
+
+    const done = (msg?: string) => {
+      if (msg) successMsg.textContent = msg;
+      wrap.classList.add('is-sent');
+      setTimeout(() => {
+        form.hidden = true;
+        success.hidden = false;
+        const top = wrap.getBoundingClientRect().top + window.scrollY - 110;
+        if (window.scrollY > top) window.scrollTo({ top, behavior: 'smooth' });
+        requestAnimationFrame(() => success.classList.add('is-in'));
+      }, 450);
+    };
+
+    form.addEventListener('input', (e) => {
+      const el = e.target as HTMLInputElement;
+      el.closest('.field')?.classList.remove('invalid');
+      error.textContent = '';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      error.textContent = '';
+
+      let firstInvalid: HTMLElement | null = null;
+      form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input[required], textarea[required]').forEach((el) => {
+        const ok = el.checkValidity();
+        (el.closest('.field') ?? el.closest('.consent'))?.classList.toggle('invalid', !ok);
+        if (!ok && !firstInvalid) firstInvalid = el;
+      });
+      if (firstInvalid) {
+        (firstInvalid as HTMLElement).focus();
+        showError('Please fill in the highlighted fields.');
+        return;
+      }
+
+      const data = new FormData(form);
+      if (data.get('website')) return done(); // bot
+
+      const payload = {
+        name: String(data.get('name') ?? ''),
+        email: String(data.get('email') ?? ''),
+        company: String(data.get('company') ?? ''),
+        projectTypes: data.getAll('type').map(String),
+        budget: String(data.get('budget') ?? ''),
+        message: String(data.get('message') ?? ''),
+      };
+
+      if (!endpoint) {
+        const body = [
+          payload.message,
+          '',
+          '—',
+          `Name: ${payload.name}`,
+          `Email: ${payload.email}`,
+          payload.company ? `Company: ${payload.company}` : '',
+          payload.projectTypes.length ? `Project: ${payload.projectTypes.join(', ')}` : '',
+          payload.budget ? `Budget: ${payload.budget}` : '',
+        ]
+          .filter((l, i) => i < 3 || l !== '')
+          .join('\n');
+        const subject = `Project enquiry from ${payload.name}${payload.company ? ` (${payload.company})` : ''}`;
+        window.location.href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        return done('Your email app should have opened with your message ready to send. Just hit send and we’ll reply within one working day.');
+      }
+
+      button.classList.add('is-loading');
+      button.disabled = true;
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ ...payload, _subject: `New enquiry from ${payload.name}` }),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        done();
+      } catch {
+        showError(`Something went wrong sending your message. Please email us directly at ${to}.`);
+      } finally {
+        button.classList.remove('is-loading');
+        button.disabled = false;
+      }
+    });
+  }
+  document.addEventListener('astro:page-load', setupForm);
+</script>
+
+<style>
+  .contact { position: relative; padding: 170px 0 40px; overflow: hidden; }
+  .orb {
+    position: absolute;
+    width: 640px;
+    height: 640px;
+    left: -220px;
+    top: -200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200, 245, 96, 0.22), transparent 65%);
+    filter: blur(40px);
+    pointer-events: none;
+  }
+  .grid { position: relative; display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(40px, 6vw, 96px); align-items: start; }
+
+  .intro { position: sticky; top: 130px; display: flex; flex-direction: column; gap: 24px; }
+  h1 { font-size: clamp(48px, 7vw, 92px); letter-spacing: -0.055em; }
+  h1 :global(.serif) { color: var(--accent); }
+  .lead { color: var(--muted); font-size: 18px; max-width: 44ch; }
+
+  .channels { display: grid; grid-template-columns: 1.45fr 1fr; gap: 12px; margin-top: 8px; }
+  .channel { padding: 20px; display: flex; flex-direction: column; gap: 6px; }
+  .label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+  .value { font-size: 15px; word-break: break-word; }
+  .go { position: absolute; top: 16px; right: 18px; color: var(--accent); transition: transform 0.5s var(--ease-out); }
+  .channel:hover .go { transform: translate(3px, -3px); }
+
+  .next ol { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 0; counter-reset: n; }
+  .next li {
+    counter-increment: n;
+    position: relative;
+    padding: 14px 0 14px 44px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .next li::before {
+    content: counter(n, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 16px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+  }
+  .next strong { font-weight: 500; }
+  .next span { color: var(--muted); font-size: 15px; }
+
+  /* Form */
+  .form-wrap {
+    position: relative;
+    padding: clamp(24px, 4vw, 44px);
+    border-radius: 30px;
+    border: 1px solid var(--line-strong);
+    background: linear-gradient(180deg, rgba(22, 22, 32, 0.85), rgba(12, 12, 18, 0.9));
+    backdrop-filter: blur(20px);
+    box-shadow: 0 60px 120px -50px rgba(0, 0, 0, 0.9);
+  }
+  .form { display: flex; flex-direction: column; gap: 22px; transition: opacity 0.45s var(--ease-out), transform 0.45s var(--ease-out), filter 0.45s; }
+  .form-wrap:global(.is-sent) .form { opacity: 0; transform: scale(0.97); filter: blur(6px); }
+  .form[hidden] { display: none; }
+  fieldset { border: 0; margin: 0; padding: 0; }
+  legend { padding: 0; margin-bottom: 12px; font-size: 15px; color: var(--muted); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill { position: relative; cursor: pointer; }
+  .pill input { position: absolute; opacity: 0; pointer-events: none; }
+  .pill span {
+    display: inline-flex;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    font-size: 14px;
+    transition: background 0.35s var(--ease-out), color 0.35s, border-color 0.35s, transform 0.5s var(--ease-spring);
+  }
+  .pill:hover span { border-color: var(--text); }
+  .pill input:checked + span { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); transform: scale(1.04); }
+  .pill input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .field { position: relative; }
+  .field input,
+  .field textarea {
+    width: 100%;
+    padding: 26px 18px 10px;
+    border-radius: 16px;
+    border: 1px solid var(--line-strong);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text);
+    font: inherit;
+    font-size: 16px;
+    resize: vertical;
+    transition: border-color 0.3s, background 0.3s, box-shadow 0.4s var(--ease-out);
+  }
+  .field textarea { min-height: 150px; }
+  .field label {
+    position: absolute;
+    left: 19px;
+    top: 18px;
+    font-size: 16px;
+    color: var(--dim);
+    pointer-events: none;
+    transform-origin: 0 0;
+    transition: transform 0.4s var(--ease-out), color 0.3s;
+  }
+  .field input:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(200, 245, 96, 0.03);
+    box-shadow: 0 0 0 4px rgba(200, 245, 96, 0.12);
+  }
+  .field input:focus + label,
+  .field textarea:focus + label,
+  .field input:not(:placeholder-shown) + label,
+  .field textarea:not(:placeholder-shown) + label {
+    transform: translateY(-11px) scale(0.75);
+    color: var(--muted);
+  }
+  .field:global(.invalid) input,
+  .field:global(.invalid) textarea { border-color: var(--coral); box-shadow: 0 0 0 4px rgba(255, 138, 107, 0.12); }
+
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+  .consent { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; color: var(--muted); cursor: pointer; }
+  .consent input {
+    appearance: none;
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    border-radius: 6px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .consent input::after {
+    content: '';
+    width: 10px;
+    height: 6px;
+    border-left: 2px solid var(--accent-ink);
+    border-bottom: 2px solid var(--accent-ink);
+    transform: rotate(-45deg) scale(0);
+    transition: transform 0.35s var(--ease-spring);
+    margin-top: -2px;
+  }
+  .consent input:checked { background: var(--accent); border-color: var(--accent); }
+  .consent input:checked::after { transform: rotate(-45deg) scale(1); }
+  .consent input:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .consent:global(.invalid) input { border-color: var(--coral); }
+  .consent a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+
+  .error { min-height: 1em; margin: -6px 0; color: var(--coral); font-size: 14px; }
+  .form:global(.shake) { animation: shake 0.5s var(--ease-out); }
+  @keyframes shake {
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(7px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(2px); }
+  }
+
+  .submit { justify-content: center; padding: 18px 28px; font-size: 16px; border: 0; }
+  .spinner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(17, 20, 10, 0.25);
+    border-top-color: var(--accent-ink);
+    opacity: 0;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(1turn); } }
+  .submit:global(.is-loading) .txt,
+  .submit:global(.is-loading) .arrow { opacity: 0; }
+  .submit:global(.is-loading) .spinner { opacity: 1; }
+  .submit:disabled { cursor: progress; }
+
+  /* Success */
+  .success { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; padding: 40px 0; }
+  .success[hidden] { display: none; }
+  .success > * { opacity: 0; transform: translateY(16px); transition: opacity 0.7s var(--ease-out), transform 0.8s var(--ease-out); }
+  .success > :nth-child(2) { transition-delay: 0.15s; }
+  .success > :nth-child(3) { transition-delay: 0.25s; }
+  .success > :nth-child(4) { transition-delay: 0.35s; }
+  .success:global(.is-in) > * { opacity: 1; transform: none; }
+  .success svg circle { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 151; stroke-dashoffset: 151; transition: stroke-dashoffset 0.9s var(--ease-out) 0.1s; }
+  .success svg path { stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 36; stroke-dashoffset: 36; transition: stroke-dashoffset 0.6s var(--ease-out) 0.7s; }
+  .success:global(.is-in) svg circle,
+  .success:global(.is-in) svg path { stroke-dashoffset: 0; }
+  .success h2 { font-size: clamp(36px, 5vw, 52px); letter-spacing: -0.04em; }
+  .success p { color: var(--muted); max-width: 38ch; }
+
+  @media (max-width: 960px) {
+    .grid { grid-template-columns: 1fr; }
+    .intro { position: static; }
+  }
+  @media (max-width: 560px) {
+    .contact { padding-top: 130px; }
+    .row, .channels { grid-template-columns: 1fr; }
+  }
+</style>

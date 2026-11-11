@@ -2,35 +2,35 @@
 import { ClientRouter } from 'astro:transitions';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import SEO, { type Props as SEOProps } from '../components/SEO.astro';
 import { SITE } from '../site';
 import '../styles/global.css';
 
-interface Props {
+type Props = Partial<SEOProps> & {
+  /** Short page name; rendered as "Name — Meo Technologies". Ignored if fullTitle is set. */
   title?: string;
-  description?: string;
-}
+  /** Exact <title>, for pages that want a hand-written keyword title. */
+  fullTitle?: string;
+};
 
-const { title, description = SITE.description } = Astro.props;
-const fullTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const { title, fullTitle, description = SITE.description, ...seo } = Astro.props;
+const pageTitle = fullTitle ?? (title ? `${title} — ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{fullTitle}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    <SEO title={pageTitle} description={description} {...seo} />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#08080c" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={fullTitle} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:site_name" content={SITE.name} />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="format-detection" content="telephone=no" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

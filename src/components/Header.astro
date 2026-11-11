@@ -9,7 +9,7 @@ import { NAV } from '../site';
     <nav class="links" aria-label="Primary">
       {NAV.map((item) => <a href={item.href}>{item.label}</a>)}
     </nav>
-    <a href="/#contact" class="btn btn-primary cta" data-magnetic="0.25">Start a project</a>
+    <a href="/contact/" class="btn btn-primary cta" data-magnetic="0.25">Start a project</a>
     <button class="menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
       <span></span><span></span>
     </button>
@@ -22,7 +22,7 @@ import { NAV } from '../site';
         </a>
       ))
     }
-    <a href="/privacy" style={`--i:${NAV.length}`}>Privacy</a>
+    <a href="/privacy/" style={`--i:${NAV.length}`}>Privacy</a>
   </nav>
 </header>
 

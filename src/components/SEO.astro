@@ -1,0 +1,132 @@
+---
+import { SITE, SERVICES } from '../site';
+
+export interface Crumb {
+  name: string;
+  path: string;
+}
+
+export interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  imageAlt?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+  breadcrumbs?: Crumb[];
+  /** Extra JSON-LD nodes for this page, merged into the site graph. */
+  schema?: Record<string, unknown>[];
+}
+
+const {
+  title,
+  description,
+  image = '/og.png',
+  imageAlt = `${SITE.name} — ${SITE.tagline}`,
+  type = 'website',
+  noindex = false,
+  breadcrumbs = [],
+  schema = [],
+} = Astro.props;
+
+const site = Astro.site ?? new URL(Astro.url.origin);
+const canonical = new URL(Astro.url.pathname, site).href;
+const imageUrl = new URL(image, site).href;
+const orgId = new URL('/#organization', site).href;
+const siteId = new URL('/#website', site).href;
+
+const graph: Record<string, unknown>[] = [
+  {
+    '@type': ['Organization', 'ProfessionalService'],
+    '@id': orgId,
+    name: SITE.name,
+    url: site.href,
+    logo: { '@type': 'ImageObject', url: new URL('/icon-512.png', site).href, width: 512, height: 512 },
+    image: imageUrl,
+    description: SITE.description,
+    email: SITE.email,
+    address: { '@type': 'PostalAddress', addressLocality: SITE.locality, addressCountry: SITE.country },
+    areaServed: ['GB', 'Worldwide'],
+    knowsAbout: [...SERVICES, 'TypeScript', 'React', 'Swift', 'Kotlin', 'Cloud computing'],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'sales',
+      email: SITE.email,
+      url: new URL('/contact/', site).href,
+      availableLanguage: ['English'],
+    },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Software development services',
+      itemListElement: SERVICES.map((name) => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name, provider: { '@id': orgId } },
+      })),
+    },
+    ...(SITE.sameAs.length ? { sameAs: SITE.sameAs } : {}),
+  },
+  {
+    '@type': 'WebSite',
+    '@id': siteId,
+    url: site.href,
+    name: SITE.name,
+    description: SITE.description,
+    inLanguage: 'en-GB',
+    publisher: { '@id': orgId },
+  },
+  {
+    '@type': 'WebPage',
+    '@id': `${canonical}#webpage`,
+    url: canonical,
+    name: title,
+    description,
+    inLanguage: 'en-GB',
+    isPartOf: { '@id': siteId },
+    about: { '@id': orgId },
+    primaryImageOfPage: { '@type': 'ImageObject', url: imageUrl },
+  },
+  ...schema,
+];
+
+if (breadcrumbs.length) {
+  graph.push({
+    '@type': 'BreadcrumbList',
+    itemListElement: [{ name: 'Home', path: '/' }, ...breadcrumbs].map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.name,
+      item: new URL(c.path, site).href,
+    })),
+  });
+}
+
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1'} />
+<meta name="author" content={SITE.name} />
+<meta name="geo.region" content="GB-LND" />
+<meta name="geo.placename" content={SITE.locality} />
+<link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:locale" content={SITE.locale} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={imageAlt} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+<meta name="twitter:image:alt" content={imageAlt} />
+
+<script type="application/ld+json" set:html={jsonLd} />

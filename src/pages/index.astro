@@ -95,27 +95,23 @@ const products = [
 
 const stack = ['TypeScript', 'React', 'Astro', 'Swift', 'Kotlin', 'React Native', 'Node.js', 'Python', 'PostgreSQL', 'AWS', 'Vercel', 'Supabase'];
 
-const faqs = [
-  {
-    q: 'How much does a project cost?',
-    a: 'Every project is scoped individually. After a short discovery call we give you a clear, fixed estimate broken down by milestone — no surprise invoices.',
-  },
-  {
-    q: 'Do we own the code?',
-    a: 'Yes. You own all source code, designs and intellectual property we create for you, and everything lives in repositories you control.',
-  },
-  {
-    q: 'Can you publish our app to the App Store and Google Play?',
-    a: 'We handle the full release process: store listings, privacy disclosures, review submissions and updates after launch.',
-  },
-  {
-    q: 'Do you support software after launch?',
-    a: 'We offer flexible support and maintenance plans covering monitoring, security updates, bug fixes and new features.',
-  },
-];
 ---
 
-<Base>
+<Base
+  fullTitle="Meo Technologies — Custom Software, App & Web Development Company in London"
+  description="Meo Technologies designs and builds custom software, iOS & Android apps, web platforms and AI automation for businesses. London-based software development studio — get a fixed estimate."
+  schema={[
+    {
+      '@type': 'ItemList',
+      name: 'Software development services',
+      itemListElement: services.map((s, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        item: { '@type': 'Service', name: s.title, description: s.body, provider: { '@id': new URL('/#organization', Astro.site).href } },
+      })),
+    },
+  ]}
+>
   <!-- HERO -->
   <section class="hero">
     <div class="orbs" aria-hidden="true" data-parallax="0.25">
@@ -131,7 +127,7 @@ const faqs = [
         businesses that refuse to stand still.
       </p>
       <div class="actions" data-reveal style="--d:650">
-        <a href="#contact" class="btn btn-primary" data-magnetic>
+        <a href="/contact/" class="btn btn-primary" data-magnetic>
           Start a project <span class="arrow">→</span>
         </a>
         <a href="#services" class="btn btn-ghost" data-magnetic>Explore services</a>
@@ -302,33 +298,9 @@ const faqs = [
     </div>
   </section>
 
-  <!-- FAQ -->
-  <section class="section">
-    <div class="container faq-grid">
-      <div>
-        <span class="eyebrow" data-reveal>Questions</span>
-        <h2 data-split data-serif="asked">Frequently asked.</h2>
-      </div>
-      <div class="faqs">
-        {
-          faqs.map((f, i) => (
-            <details class="faq" data-reveal style={`--d:${i * 80}`}>
-              <summary>
-                {f.q}
-                <span class="plus" aria-hidden="true" />
-              </summary>
-              <div class="answer">
-                <p>{f.a}</p>
-              </div>
-            </details>
-          ))
-        }
-      </div>
-    </div>
-  </section>
 
   <!-- CONTACT -->
-  <section id="contact" class="section">
+  <section id="start" class="section">
     <div class="container">
       <div class="cta-card" data-reveal="scale">
         <div class="cta-glow" aria-hidden="true"></div>
@@ -336,9 +308,10 @@ const faqs = [
         <h2 data-split data-serif="next">Have an idea? Let’s build what’s next.</h2>
         <p class="sub">Tell us about your project and we’ll reply within one working day.</p>
         <div class="actions center">
-          <a href={`mailto:${SITE.email}?subject=New%20project%20enquiry`} class="btn btn-primary" data-magnetic>
-            {SITE.email} <span class="arrow">→</span>
+          <a href="/contact/" class="btn btn-primary" data-magnetic>
+            Start a project <span class="arrow">→</span>
           </a>
+          <a href={`mailto:${SITE.email}`} class="btn btn-ghost" data-magnetic>{SITE.email}</a>
         </div>
       </div>
     </div>
@@ -650,47 +623,6 @@ const faqs = [
   }
   .stack li:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-3px); }
 
-  /* FAQ */
-  .faq-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px; }
-  .faq-grid > div:first-child { display: flex; flex-direction: column; gap: 20px; }
-  .faq { border-top: 1px solid var(--line); }
-  .faq:last-child { border-bottom: 1px solid var(--line); }
-  summary {
-    list-style: none;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    padding: 26px 0;
-    font-size: 20px;
-    letter-spacing: -0.02em;
-    transition: color 0.3s;
-  }
-  summary::-webkit-details-marker { display: none; }
-  summary:hover { color: var(--accent); }
-  .plus { position: relative; flex: none; width: 18px; height: 18px; }
-  .plus::before, .plus::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    height: 1.5px;
-    background: currentColor;
-    transition: transform 0.5s var(--ease-out);
-  }
-  .plus::after { transform: rotate(90deg); }
-  .faq[open] .plus::after { transform: rotate(0deg); }
-  .answer { display: grid; grid-template-rows: 1fr; }
-  .answer p { padding-bottom: 26px; color: var(--muted); max-width: 60ch; }
-  .faq::details-content {
-    block-size: 0;
-    overflow: hidden;
-    transition: block-size 0.5s var(--ease-out), content-visibility 0.5s allow-discrete;
-  }
-  .faq[open]::details-content { block-size: auto; }
-  :root { interpolate-size: allow-keywords; }
 
   /* CTA */
   .cta-card {
@@ -721,7 +653,7 @@ const faqs = [
 
   @media (max-width: 960px) {
     .services, .products { grid-template-columns: 1fr 1fr; }
-    .process-grid, .faq-grid { grid-template-columns: 1fr; gap: 32px; }
+    .process-grid { grid-template-columns: 1fr; gap: 32px; }
     .process-head { position: static; }
     .stats { grid-template-columns: 1fr 1fr; }
     .phone { right: -10px; width: 130px; height: 250px; }
