@@ -1,0 +1,31 @@
+---
+import { SITE } from '../site';
+---
+
+<a href="/" class="logo" aria-label={`${SITE.name} home`}>
+  <svg viewBox="0 0 64 64" width="30" height="30" aria-hidden="true">
+    <rect width="64" height="64" rx="16" fill="var(--accent)"></rect>
+    <path
+      d="M14 46V18l18 16 18-16v28"
+      fill="none"
+      stroke="var(--accent-ink)"
+      stroke-width="6"
+      stroke-linecap="round"
+      stroke-linejoin="round"></path>
+  </svg>
+  <span>Meo<span class="dim"> Technologies</span></span>
+</a>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-size: 17px;
+  }
+  .logo svg { transition: transform 0.8s var(--ease-spring); }
+  .logo:hover svg { transform: rotate(-12deg) scale(1.06); }
+  .dim { color: var(--muted); font-weight: 400; }
+</style>

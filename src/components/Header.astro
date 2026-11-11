@@ -1,0 +1,146 @@
+---
+import Logo from './Logo.astro';
+import { NAV } from '../site';
+---
+
+<header class="header" data-header transition:persist>
+  <div class="bar container">
+    <Logo />
+    <nav class="links" aria-label="Primary">
+      {NAV.map((item) => <a href={item.href}>{item.label}</a>)}
+    </nav>
+    <a href="/#contact" class="btn btn-primary cta" data-magnetic="0.25">Start a project</a>
+    <button class="menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+      <span></span><span></span>
+    </button>
+  </div>
+  <nav id="mobile-nav" class="mobile" aria-label="Mobile">
+    {
+      NAV.map((item, i) => (
+        <a href={item.href} style={`--i:${i}`}>
+          {item.label}
+        </a>
+      ))
+    }
+    <a href="/privacy" style={`--i:${NAV.length}`}>Privacy</a>
+  </nav>
+</header>
+
+<script>
+  function setupMenu() {
+    const header = document.querySelector<HTMLElement>('[data-header]');
+    const btn = header?.querySelector<HTMLButtonElement>('.menu');
+    if (!header || !btn || btn.dataset.bound) return;
+    btn.dataset.bound = 'true';
+    const set = (open: boolean) => {
+      header.classList.toggle('is-open', open);
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      document.body.style.overflow = open ? 'hidden' : '';
+    };
+    btn.addEventListener('click', () => set(!header.classList.contains('is-open')));
+    header.querySelectorAll('.mobile a').forEach((a) => a.addEventListener('click', () => set(false)));
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && set(false));
+    document.addEventListener('astro:before-swap', () => set(false));
+  }
+  document.addEventListener('astro:page-load', setupMenu);
+</script>
+
+<style>
+  .header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    padding-top: 14px;
+    transition: padding 0.5s var(--ease-out);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 64px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    transition: background 0.5s var(--ease-out), border-color 0.5s, backdrop-filter 0.5s, max-width 0.7s var(--ease-out);
+  }
+  :global(.header.is-scrolled) .bar {
+    max-width: 1000px;
+    background: rgba(12, 12, 18, 0.72);
+    border-color: var(--line);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    padding-inline: 10px 10px;
+    padding-left: 22px;
+  }
+  .links {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+  }
+  .links a {
+    position: relative;
+    padding: 8px 14px;
+    font-size: 15px;
+    color: var(--muted);
+    border-radius: 999px;
+    transition: color 0.3s, background 0.3s;
+  }
+  .links a:hover { color: var(--text); background: var(--surface-2); }
+  .cta { padding: 11px 20px; font-size: 14px; }
+
+  .menu {
+    display: none;
+    margin-left: auto;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    position: relative;
+    cursor: pointer;
+  }
+  .menu span {
+    position: absolute;
+    left: 13px;
+    right: 13px;
+    height: 1.5px;
+    background: var(--text);
+    transition: transform 0.5s var(--ease-out), top 0.5s var(--ease-out);
+  }
+  .menu span:first-child { top: 17px; }
+  .menu span:last-child { top: 25px; }
+  :global(.header.is-open) .menu span:first-child { top: 21px; transform: rotate(45deg); }
+  :global(.header.is-open) .menu span:last-child { top: 21px; transform: rotate(-45deg); }
+
+  .mobile {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 var(--gutter);
+    background: rgba(8, 8, 12, 0.96);
+    backdrop-filter: blur(20px);
+    clip-path: circle(0% at calc(100% - 44px) 46px);
+    transition: clip-path 0.8s var(--ease-out);
+    visibility: hidden;
+  }
+  .mobile a {
+    font-size: clamp(40px, 11vw, 64px);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s var(--ease-out), transform 0.8s var(--ease-out);
+    transition-delay: calc(var(--i) * 60ms + 150ms);
+  }
+  :global(.header.is-open) .mobile { clip-path: circle(150% at calc(100% - 44px) 46px); visibility: visible; }
+  :global(.header.is-open) .mobile a { opacity: 1; transform: none; }
+
+  @media (max-width: 860px) {
+    .links, .cta { display: none; }
+    .menu { display: block; }
+  }
+</style>

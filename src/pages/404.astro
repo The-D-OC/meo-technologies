@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Page not found">
+  <section class="nf container">
+    <span class="eyebrow" data-reveal>Error 404</span>
+    <h1 data-split data-serif="lost">This page got lost.</h1>
+    <p data-reveal style="--d:300">The page you’re looking for doesn’t exist or has moved.</p>
+    <a href="/" class="btn btn-primary" data-magnetic data-reveal style="--d:450">Back home <span class="arrow">→</span></a>
+  </section>
+</Base>
+
+<style>
+  .nf { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 24px; padding-top: 120px; }
+  h1 { font-size: clamp(48px, 9vw, 120px); letter-spacing: -0.055em; }
+  h1 :global(.serif) { color: var(--accent); }
+  p { color: var(--muted); font-size: 18px; }
+</style>

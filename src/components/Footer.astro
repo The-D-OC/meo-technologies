@@ -1,0 +1,94 @@
+---
+import Logo from './Logo.astro';
+import { SITE, NAV } from '../site';
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="big" aria-hidden="true">
+      <span>Meo</span><span class="serif">Technologies</span>
+    </div>
+    <div class="row">
+      <div class="col brand">
+        <Logo />
+        <p>{SITE.description}</p>
+      </div>
+      <nav class="col" aria-label="Footer">
+        <h4>Explore</h4>
+        {NAV.map((item) => <a href={item.href}>{item.label}</a>)}
+      </nav>
+      <div class="col">
+        <h4>Legal</h4>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/privacy#deletion">Account deletion</a>
+        <a href="/privacy#contact">Data requests</a>
+      </div>
+      <div class="col">
+        <h4>Contact</h4>
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        <span class="muted">{SITE.location}</span>
+      </div>
+    </div>
+    <div class="base">
+      <span>© {year} {SITE.name}. All rights reserved.</span>
+      <a href="#main" class="top">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    margin-top: 40px;
+    padding: 40px 0 32px;
+    border-top: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .big {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.25em;
+    font-size: clamp(56px, 13vw, 190px);
+    letter-spacing: -0.06em;
+    line-height: 0.9;
+    padding: 30px 0 56px;
+    background: linear-gradient(180deg, var(--text) 30%, rgba(242, 241, 236, 0.08));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.3fr;
+    gap: 40px;
+  }
+  .col { display: flex; flex-direction: column; gap: 10px; font-size: 15px; }
+  .col a, .muted { color: var(--muted); transition: color 0.3s; width: fit-content; }
+  .col a:hover { color: var(--accent); }
+  .brand p { color: var(--muted); max-width: 34ch; margin-top: 8px; }
+  h4 {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 6px;
+  }
+  .base {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+    color: var(--dim);
+  }
+  .top:hover { color: var(--text); }
+  @media (max-width: 860px) {
+    .row { grid-template-columns: 1fr 1fr; }
+    .brand { grid-column: 1 / -1; }
+  }
+</style>

@@ -1,0 +1,20 @@
+{
+  "name": "meo-technologies",
+  "version": "1.0.0",
+  "description": "Meo Technologies — software development and technology creator for businesses",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@astrojs/check": "^0.9.12",
+    "astro": "^7.4.10",
+    "typescript": "^6.0.3"
+  },
+  "type": "module",
+  "private": true
+}
