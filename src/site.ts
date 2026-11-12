@@ -1,6 +1,8 @@
 export const SITE = {
   name: 'Meo Technologies',
   shortName: 'Meo',
+  // Legal owner / data controller — must match the App Store & Google Play developer name.
+  legalName: "D'arcy O'Connor",
   tagline: 'Software, built to move your business.',
   description:
     'Meo Technologies is a London software development company building custom software, iOS & Android apps, web platforms and AI automation for businesses.',

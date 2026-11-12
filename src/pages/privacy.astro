@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import { SITE } from '../site';
 
-const effective = '11 November 2026';
+const effective = '12 November 2026';
 
 const sections = [
   { id: 'overview', title: 'Overview' },
@@ -56,8 +56,10 @@ const sections = [
       <section id="overview" data-reveal>
         <h2>1. Overview</h2>
         <p>
-          {SITE.name} (“<strong>Meo</strong>”, “<strong>we</strong>”, “<strong>us</strong>”) builds software and mobile
-          applications. This Privacy Policy explains what personal information we collect when you use our apps
+          {SITE.name} is operated by <strong>{SITE.legalName}</strong>, an individual developer based in the United
+          Kingdom trading as {SITE.name} (“<strong>Meo</strong>”, “<strong>we</strong>”, “<strong>us</strong>”), who
+          builds software and mobile applications. {SITE.legalName} is the data controller responsible for your
+          personal information and is the developer and seller of our apps on the Apple App Store and Google Play. This Privacy Policy explains what personal information we collect when you use our apps
           (including those distributed through the Apple App Store and Google Play), our website and related services
           (together, the “<strong>Services</strong>”), how we use it, and the choices you have.
         </p>
@@ -239,8 +241,8 @@ const sections = [
             <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
           </div>
           <div>
-            <span class="label">Location</span>
-            <span>{SITE.name}, {SITE.location}</span>
+            <span class="label">Data controller</span>
+            <span>{SITE.legalName}, trading as {SITE.name}, {SITE.location}</span>
           </div>
         </div>
       </section>
