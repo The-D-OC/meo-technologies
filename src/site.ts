@@ -7,8 +7,8 @@ export const SITE = {
   description:
     'Meo Technologies is a London software development company building custom software, iOS & Android apps, web platforms and AI automation for businesses.',
   // Update these before going live.
-  email: 'hello@meotechnologies.com',
-  privacyEmail: 'privacy@meotechnologies.com',
+  email: 'info@tumbi.co.uk',
+  privacyEmail: 'info@tumbi.co.uk',
   location: 'London, United Kingdom',
   locality: 'London',
   country: 'GB',
